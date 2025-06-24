@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, BadRequestException, NotFoundException } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, BadRequestException, NotFoundException, InternalServerErrorException } from '@nestjs/common';
 import { UserService } from './user.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
@@ -12,7 +12,7 @@ export class UserController {
   async create(@Body() createUserDto: CreateUserDto):Promise<number> {
     const existingUser = await this.userService.findOne(createUserDto.email);
     if(existingUser){
-      throw new BadRequestException('User already exists');
+      throw new InternalServerErrorException({message:'User already exists',status:500});
     }
     const user = await this.userService.create(createUserDto);
     return user.id;
